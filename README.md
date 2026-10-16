@@ -26,3 +26,7 @@ npm start
 ```
 
 APIは認証（ゲスト / ユーザー登録 / ログイン）、ロビー、対戦作成、推理結果、レート保存を提供します。データは `server/data/db.json` に保存されます。GitHub Pagesは静的ホスティングなので、実際の複数人対戦を公開する場合はこのNodeサーバーをRenderやRailwayなどにデプロイし、フロントのAPI URLを差し替えてください。
+
+## 公開デプロイ
+
+`Dockerfile` と `render.yaml` を含めています。RenderでこのリポジトリをBlueprintとして読み込むと、Node APIを公開できます。`/api/health` が稼働確認用エンドポイントです。フロントとAPIを同一ホストで公開する場合はNodeサーバーをそのまま配信元にしてください。

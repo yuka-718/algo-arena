@@ -6,6 +6,7 @@ const opponentRate = document.querySelector('#opponent-rate');
 const opponents = [['mika.cards','1,808'],['ryo_logic','1,842'],['shun_4','1,790']];
 let activeMatchId = null;
 let authToken = localStorage.getItem('algo_token');
+let accountMode = 'login';
 async function api(path, options={}) {
   try { const response = await fetch(path, {headers:{'content-type':'application/json', ...(authToken?{authorization:`Bearer ${authToken}`}:{})}, ...options}); if (!response.ok) return null; return await response.json(); } catch { return null; }
 }
@@ -18,6 +19,14 @@ function openMatch() {
   api('/api/matches',{method:'POST',body:JSON.stringify({mode:'rated'})}).then(result=>{ if(result?.match){activeMatchId=result.match.id; opponent.textContent=result.match.opponent; opponentRate.textContent=`${result.match.opponentRating} RATE`; } else { const found=opponents[Math.floor(Math.random()*opponents.length)]; opponent.textContent=found[0]; opponentRate.textContent=`${found[1]} RATE`; } title.innerHTML='対戦相手が見つかりました'; copy.textContent='準備ができたら対戦を開始してください。'; });
 }
 function showRules() { document.querySelector('#how').scrollIntoView({behavior:'smooth'}); }
+function openAccount() { document.querySelector('#account-modal').classList.remove('hidden'); }
+function closeAccount() { document.querySelector('#account-modal').classList.add('hidden'); }
+async function submitAccount(event) {
+  event.preventDefault(); const form=new FormData(event.currentTarget); const path=accountMode==='register'?'/api/auth/register':'/api/auth/login';
+  const result=await api(path,{method:'POST',body:JSON.stringify({username:form.get('username'),password:form.get('password')})});
+  document.querySelector('#account-copy').textContent=result?.token?'ログインしました。対戦履歴を保存できます。':(result?.error||'公開サイトではゲストモードも利用できます。');
+  if(result?.token){authToken=result.token;localStorage.setItem('algo_token',authToken);closeAccount();}
+}
 function startGame() {
   title.textContent = '相手のカードを推理しよう';
   copy.textContent = '相手の伏せられたカードから、数字を選んでください。';
@@ -43,5 +52,9 @@ document.addEventListener('click', (e) => {
   if (action === 'start-game') startGame();
   if (action === 'guess') guessCard(e.target.closest('[data-action="guess"]'));
   if (action === 'ranking') document.querySelector('#rank').scrollIntoView({behavior:'smooth'});
-  if (action === 'profile') api('/api/auth/guest',{method:'POST',body:JSON.stringify({username:'yuki_718'})}).then(result=>{if(result?.token){authToken=result.token;localStorage.setItem('algo_token',authToken);alert('ゲストログインしました。対戦結果を保存できます。')}else alert('ゲストモードで遊べます。ローカル起動時はバックエンドに接続できます。');});
+  if (action === 'profile') openAccount();
+  if (action === 'close-account') closeAccount();
+  if (action === 'register') {accountMode='register';document.querySelector('#account-form button[type="submit"]').innerHTML='アカウント作成 <b>→</b>';document.querySelector('#account-copy').textContent='ユーザー名とパスワードを登録してください。';}
+  if (action === 'guest-login') api('/api/auth/guest',{method:'POST',body:JSON.stringify({username:'yuki_718'})}).then(result=>{if(result?.token){authToken=result.token;localStorage.setItem('algo_token',authToken);closeAccount();}else document.querySelector('#account-copy').textContent='ゲストモードで遊べます。';});
 });
+document.querySelector('#account-form').addEventListener('submit',submitAccount);

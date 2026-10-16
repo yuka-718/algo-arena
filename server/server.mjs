@@ -43,11 +43,13 @@ async function route(req, res) {
   }
   if (url.pathname === '/api/lobby' && req.method === 'GET') return json(res,200,{rooms:[...matches.values()].filter(m=>m.status==='waiting').map(m=>({id:m.id,mode:m.mode,players:m.players.length})),leaderboard:db.users.filter(u=>!u.guest).sort((a,b)=>b.rating-a.rating).slice(0,20).map(publicUser)});
   if (url.pathname === '/api/me' && req.method === 'GET') { const user=userFrom(req); return user ? json(res,200,{user:publicUser(user)}) : json(res,401,{error:'ログインが必要です。'}); }
+  if (url.pathname === '/api/auth/logout' && req.method === 'POST') { const token=req.headers.authorization?.replace('Bearer ',''); sessions.delete(token); return json(res,200,{ok:true}); }
+  if (url.pathname === '/api/history' && req.method === 'GET') { const user=userFrom(req); if(!user) return json(res,401,{error:'ログインが必要です。'}); return json(res,200,{games:db.games.filter(g=>g.username===user.username).slice(-20).reverse()}); }
   if (url.pathname === '/api/matches' && req.method === 'POST') {
     const user=userFrom(req) || {id:'guest-local',username:'yuki_718',rating:1824}; const input=await body(req); const id=randomUUID(); const match={id,mode:input.mode==='casual'?'casual':'rated',players:[user.username,'mika.cards'],target:4,status:'active',createdAt:new Date().toISOString()}; matches.set(id,match); return json(res,201,{match:{id,opponent:match.players[1],opponentRating:1808,target:4}});
   }
   const guessMatch = url.pathname.match(/^\/api\/matches\/([^/]+)\/guess$/);
-  if (guessMatch && req.method === 'POST') { const match=matches.get(guessMatch[1]); if(!match) return json(res,404,{error:'対戦が見つかりません。'}); const input=await body(req); const correct=Number(input.value)===match.target; if(correct){match.status='won'; const user=userFrom(req); if(user){user.rating+=24;user.games++;await saveDb();}} return json(res,200,{correct, status:match.status, ratingDelta:correct?24:0}); }
+  if (guessMatch && req.method === 'POST') { const match=matches.get(guessMatch[1]); if(!match) return json(res,404,{error:'対戦が見つかりません。'}); const input=await body(req); const correct=Number(input.value)===match.target; const user=userFrom(req); if(correct){match.status='won'; if(user){user.rating+=24;user.games++;db.games.push({id:randomUUID(),username:user.username,opponent:match.players[1],result:'win',ratingDelta:24,createdAt:new Date().toISOString()});await saveDb();}} return json(res,200,{correct, status:match.status, ratingDelta:correct?24:0}); }
   const requested = normalize(join(root, url.pathname));
   if (!requested.startsWith(root) || url.pathname.startsWith('/server')) return json(res,404,{error:'Not found'});
   try { const file=await readFile(requested); res.writeHead(200,{'content-type':mime[extname(requested)]||'application/octet-stream'}); res.end(file); } catch { json(res,404,{error:'Not found'}); }
