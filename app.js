@@ -4,13 +4,18 @@ const copy = document.querySelector('#modal-copy');
 const opponent = document.querySelector('#opponent-name');
 const opponentRate = document.querySelector('#opponent-rate');
 const opponents = [['mika.cards','1,808'],['ryo_logic','1,842'],['shun_4','1,790']];
+let activeMatchId = null;
+let authToken = localStorage.getItem('algo_token');
+async function api(path, options={}) {
+  try { const response = await fetch(path, {headers:{'content-type':'application/json', ...(authToken?{authorization:`Bearer ${authToken}`}:{})}, ...options}); if (!response.ok) return null; return await response.json(); } catch { return null; }
+}
 
 function openMatch() {
   modal.classList.remove('hidden');
   title.innerHTML = '対戦相手を探しています<span class="loader">...</span>';
   copy.textContent = 'レートが近いプレイヤーとマッチング中。';
   opponent.textContent = 'SEARCHING'; opponentRate.textContent = '— RATE';
-  setTimeout(() => { const found = opponents[Math.floor(Math.random()*opponents.length)]; opponent.textContent = found[0]; opponentRate.textContent = `${found[1]} RATE`; title.innerHTML = '対戦相手が見つかりました'; copy.textContent = '準備ができたら対戦を開始してください。'; }, 900);
+  api('/api/matches',{method:'POST',body:JSON.stringify({mode:'rated'})}).then(result=>{ if(result?.match){activeMatchId=result.match.id; opponent.textContent=result.match.opponent; opponentRate.textContent=`${result.match.opponentRating} RATE`; } else { const found=opponents[Math.floor(Math.random()*opponents.length)]; opponent.textContent=found[0]; opponentRate.textContent=`${found[1]} RATE`; } title.innerHTML='対戦相手が見つかりました'; copy.textContent='準備ができたら対戦を開始してください。'; });
 }
 function showRules() { document.querySelector('#how').scrollIntoView({behavior:'smooth'}); }
 function startGame() {
@@ -27,6 +32,7 @@ function guessCard(button) {
   document.querySelector('.full').disabled = false;
   document.querySelector('.full').textContent = right ? '正解！ 次のカードへ' : '不正解… もう一度';
   copy.textContent = right ? '読み勝ち！ レート +24 のチャンス。' : '相手のカードはその数字ではありません。';
+  if (activeMatchId) api(`/api/matches/${activeMatchId}/guess`,{method:'POST',body:JSON.stringify({value:Number(button.dataset.value)})});
 }
 document.addEventListener('click', (e) => {
   const action = e.target.closest('[data-action]')?.dataset.action;
@@ -37,5 +43,5 @@ document.addEventListener('click', (e) => {
   if (action === 'start-game') startGame();
   if (action === 'guess') guessCard(e.target.closest('[data-action="guess"]'));
   if (action === 'ranking') document.querySelector('#rank').scrollIntoView({behavior:'smooth'});
-  if (action === 'profile') alert('プロフィール機能は次のアップデートで追加予定です。');
+  if (action === 'profile') api('/api/auth/guest',{method:'POST',body:JSON.stringify({username:'yuki_718'})}).then(result=>{if(result?.token){authToken=result.token;localStorage.setItem('algo_token',authToken);alert('ゲストログインしました。対戦結果を保存できます。')}else alert('ゲストモードで遊べます。ローカル起動時はバックエンドに接続できます。');});
 });

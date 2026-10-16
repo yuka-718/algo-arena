@@ -1,0 +1,8 @@
+{
+  "name": "algo-arena",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node server/server.mjs", "dev": "node --watch server/server.mjs" },
+  "engines": { "node": ">=20" }
+}
