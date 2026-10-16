@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>ALGO ARENA — 数字を読む、読み合う。</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="topbar">
+    <a class="brand" href="#top"><span class="brand-mark">A</span><span>ALGO <em>ARENA</em></span></a>
+    <nav><a href="#play">プレイ</a><a href="#how">遊び方</a><a href="#rank">ランキング</a></nav>
+    <button class="profile-btn" data-action="profile"><span class="avatar">Y</span><span>yuki_718</span><span class="chevron">⌄</span></button>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> ONLINE / 1,248 PLAYERS</div>
+        <h1>数字を読む。<br><span>相手を読む。</span></h1>
+        <p>4色のカードを並べ、相手の数字を見抜け。<br>短時間で決着する、2人用の推理カードゲーム。</p>
+        <div class="hero-actions"><button class="primary" data-action="play"><span>今すぐ対戦</span><b>→</b></button><button class="ghost" data-action="how">ルールを見る <span>↗</span></button></div>
+        <div class="hero-meta"><div><strong>3:42</strong><span>平均ゲーム時間</span></div><div><strong>12,460</strong><span>今日の対戦数</span></div><div><strong>#1,824</strong><span>あなたの順位</span></div></div>
+      </div>
+      <div class="hero-visual" aria-label="カードのプレビュー">
+        <div class="orb orb-a"></div><div class="orb orb-b"></div>
+        <div class="card-stack"><div class="card card-back"><span>ALGO</span><small>ARENA</small></div><div class="card card-front"><div class="card-top"><span>04</span><span>◆</span></div><div class="card-number">4</div><div class="card-bottom"><span>◆</span><span>04</span></div></div></div>
+        <div class="floating-tag tag-1"><span class="dot green"></span> MATCH FOUND</div><div class="floating-tag tag-2">+24 <small>RATE</small></div>
+      </div>
+    </section>
+
+    <section id="play" class="arena-panel wrap">
+      <div class="section-kicker">01 / CHOOSE YOUR BATTLE</div>
+      <div class="panel-heading"><div><h2>どのモードで遊ぶ？</h2><p>今の気分に合う対戦を選んでください。</p></div><span class="status"><span class="pulse"></span> MATCHMAKING ACTIVE</span></div>
+      <div class="mode-grid">
+        <button class="mode-card featured" data-action="play"><span class="mode-icon">⚔</span><span class="mode-copy"><small>RATED MATCH</small><strong>ランク対戦</strong><em>勝ってレートを上げよう</em></span><span class="mode-arrow">→</span></button>
+        <button class="mode-card" data-action="practice"><span class="mode-icon">◎</span><span class="mode-copy"><small>CASUAL MATCH</small><strong>カジュアル</strong><em>気軽に1戦</em></span><span class="mode-arrow">→</span></button>
+        <button class="mode-card" data-action="how"><span class="mode-icon">?</span><span class="mode-copy"><small>LEARN THE GAME</small><strong>遊び方</strong><em>3分でルールを理解</em></span><span class="mode-arrow">→</span></button>
+      </div>
+    </section>
+
+    <section id="rank" class="lower-grid wrap">
+      <div class="leaderboard panel"><div class="panel-title"><div><span class="section-kicker">02 / GLOBAL RANKING</span><h2>週間ランキング</h2></div><button class="text-btn" data-action="ranking">すべて見る →</button></div><div class="leader-row top"><span class="rank-no">01</span><span class="mini-avatar lime">K</span><span class="player">kaito_99 <small>連勝中</small></span><strong>2,486</strong><span class="trend">↑ 12</span></div><div class="leader-row"><span class="rank-no">02</span><span class="mini-avatar purple">M</span><span class="player">mika.cards</span><strong>2,410</strong><span class="trend">↑ 4</span></div><div class="leader-row"><span class="rank-no">03</span><span class="mini-avatar orange">R</span><span class="player">ryo_logic</span><strong>2,364</strong><span class="trend">↑ 9</span></div><div class="leader-row you"><span class="rank-no">#12</span><span class="mini-avatar blue">Y</span><span class="player">yuki_718 <small>あなた</small></span><strong>1,824</strong><span class="trend">↑ 2</span></div></div>
+      <div id="how" class="how panel"><span class="section-kicker">03 / HOW TO PLAY</span><h2>3つの読み合い。</h2><div class="step"><span>01</span><p><strong>並べる</strong><br><small>手札を昇順に4枚セット。</small></p></div><div class="step"><span>02</span><p><strong>探る</strong><br><small>相手のカードを1枚ずつ推理。</small></p></div><div class="step"><span>03</span><p><strong>当てる</strong><br><small>全部見抜いたら、あなたの勝ち。</small></p></div></div>
+    </section>
+  </main>
+  <footer class="wrap footer"><span>ALGO ARENA © 2026</span><span>BUILT FOR QUICK MINDS</span><span>v0.1.0</span></footer>
+
+  <div class="modal hidden" id="game-modal"><div class="modal-card"><button class="modal-close" data-action="close">×</button><div class="section-kicker">RATED MATCH / ROOM #AO-1842</div><h2 id="modal-title">対戦相手を探しています<span class="loader">...</span></h2><p id="modal-copy">レートが近いプレイヤーとマッチング中。</p><div class="match-preview"><div class="match-player"><span class="mini-avatar blue">Y</span><strong>yuki_718</strong><small>1,824 RATE</small></div><div class="vs">VS</div><div class="match-player"><span class="mini-avatar purple">?</span><strong id="opponent-name">SEARCHING</strong><small id="opponent-rate">— RATE</small></div></div><button class="primary full" data-action="start-game">模擬対戦を開始 <b>→</b></button><button class="text-btn modal-cancel" data-action="close">キャンセル</button></div></div>
+  <script src="./app.js"></script>
+</body>
+</html>
