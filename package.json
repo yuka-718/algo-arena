@@ -1,8 +1,21 @@
 {
   "name": "algo-arena",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "start": "node server/server.mjs", "dev": "node --watch server/server.mjs" },
-  "engines": { "node": ">=20" }
+  "scripts": {
+    "start": "node server/server.mjs",
+    "dev": "node --watch server/server.mjs",
+    "test": "node --test tests/*.test.js",
+    "build": "node scripts/build.mjs",
+    "db:generate": "drizzle-kit generate"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.11",
+    "drizzle-orm": "^0.45.4",
+    "esbuild": "^0.28.2"
+  }
 }

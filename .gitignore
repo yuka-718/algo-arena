@@ -1,3 +1,7 @@
 server/data/*.json
 node_modules/
 .DS_Store
+dist/
+.wrangler/
+*.tar.gz
+.env*
